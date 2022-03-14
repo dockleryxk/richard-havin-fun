@@ -6,3 +6,7 @@ body {
   width: 100vw;
   overflow: hidden;
 }
+
+#gimme-pizza {
+  display: none;
+}
