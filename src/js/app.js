@@ -1,4 +1,5 @@
 var bgs = ["pizza-trippy.gif", "trippy-pizza.gif", "tile-pizza.gif"]
+var count = 0
 
 function setBg() {
   var bg = bgs[Math.floor(Math.random() * bgs.length)]
