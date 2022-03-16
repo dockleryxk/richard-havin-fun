@@ -6,6 +6,18 @@ body {
   width: 100vw;
   overflow: hidden;
 
+  &.pizza-trippy {
+    background-image: url("/static/images/pizza-trippy.gif");
+  }
+
+  &.trippy-pizza {
+    background-image: url("/static/images/trippy-pizza.gif");
+  }
+
+  &.tile-pizza {
+    background-image: url("/static/images/tile-pizza.gif");
+  }
+
   #gimme-pizza {
     display: none;
   }

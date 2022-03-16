@@ -1,12 +1,16 @@
-var bgs = ["pizza-trippy.gif", "trippy-pizza.gif", "tile-pizza.gif"]
+var bgClasses = ["pizza-trippy", "trippy-pizza", "tile-pizza"]
+var bgClass = ""
 var count = 0
 
-function setBg() {
-  var bg = bgs[Math.floor(Math.random() * bgs.length)]
-  document.body.style.backgroundImage = "url(static/img/" + bg + ")"
+function setBg(removeClass) {
+  if (removeClass) {
+    document.body.classList.remove(bgClass)
+  }
+  bgClass = bgClasses[Math.floor(Math.random() * bgClasses.length)]
+  document.body.classList.add(bgClass)
 }
 
-setBg()
+setBg(false)
 
 var isAudioPlaying = false
 var audioEl = document.getElementById("gimme-pizza")
@@ -18,5 +22,5 @@ document.addEventListener("click", function () {
     audioEl.play()
   }
   isAudioPlaying = !isAudioPlaying
-  setBg()
+  setBg(true)
 })

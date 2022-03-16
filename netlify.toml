@@ -154,9 +154,9 @@
 
     # Multi-value headers are expressed with multi-line strings.
     cache-control = '''
-    max-age=0,
+    max-age=604800,
     no-cache,
-    no-store,
+    must-understand,
     must-revalidate'''
 
     # Basic-Auth allows you to password protect your whole site.
