@@ -1,5 +1,5 @@
 # richard-havin-fun
-maybe I'll make this into something later
+this is an over-engineered dumb website, [check](https://www.richard.pizza) [it](https://richard.rip) [out](https://richardjeffords.com)
 
 ### build
 ```bash
