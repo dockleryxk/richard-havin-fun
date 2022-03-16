@@ -132,7 +132,7 @@
   [headers.values]
     X-Frame-Options = "DENY"
     X-XSS-Protection = "1; mode=block"
-    Content-Security-Policy = "default-src 'self'; script-src https://www.google-analytics.com"
+    # Content-Security-Policy = "default-src 'self'; script-src https://www.google-analytics.com"
 
     # Multi-value headers are expressed with multi-line strings.
   cache-control = '''
