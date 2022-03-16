@@ -9,12 +9,13 @@
 
 var settings = {
   clean: true,
-  scripts: true,
-  polyfills: false,
-  styles: true,
-  svgs: false,
   copy: true,
-  reload: true
+  polyfills: false,
+  reload: true,
+  sitemap: true,
+  scripts: true,
+  styles: true,
+  svgs: false
 }
 
 /**
@@ -69,6 +70,7 @@ var flatmap = require("gulp-flatmap")
 var lazypipe = require("lazypipe")
 var rename = require("gulp-rename")
 var header = require("gulp-header")
+var replace = require("gulp-replace")
 var package = require("./package.json")
 
 // Scripts
@@ -77,6 +79,9 @@ var stylish = require("jshint-stylish")
 var concat = require("gulp-concat")
 var terser = require("gulp-terser")
 var optimizejs = require("gulp-optimize-js")
+
+// Sitemap
+var sitemap = require("gulp-sitemap")
 
 // Styles
 var sass = require("gulp-sass")(require("node-sass"))
@@ -233,6 +238,29 @@ var copyFiles = function (done) {
     .pipe(dest(paths.copy.output))
 }
 
+// Build the sitemap
+var buildSitemap = function (done) {
+  // Make sure this feature is activated before running
+  if (!settings.sitemap) {
+    return done()
+  }
+
+  // https://github.com/pgilad/gulp-sitemap#options
+  var sitemapOptions = {
+    siteUrl: "https://www.richard.pizza",
+    changefreq: "weekly",
+    priority: function (siteUrl, loc, entry) {
+      // Give pages inside root path (i.e. no slashes) a higher priority
+      return loc.split("/").length === 0 ? 1 : 0.5
+    }
+  }
+
+  return src(paths.copy.input + ".html", { read: false })
+    .pipe(sitemap(sitemapOptions))
+    .pipe(replace(`<?xml version="1.0" encoding="UTF-8"?>`, `<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type="text/xsl" href="sitemap.xsl"?>`))
+    .pipe(dest(paths.output))
+}
+
 // Watch for changes to the src directory
 var startServer = function (done) {
   // Make sure this feature is activated before running
@@ -280,7 +308,8 @@ exports.default = series(
     lintScripts,
     buildStyles,
     buildSVGs,
-    copyFiles
+    copyFiles,
+    buildSitemap
   )
 )
 

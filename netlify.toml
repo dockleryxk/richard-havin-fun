@@ -93,6 +93,30 @@
   # take precedence over any existing files.
   force = true
 
+[[redirects]]
+  from = "https://richardjeffords.com/*"
+  to = "https://www.richard.pizza"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "https://www.richardjeffords.com/*"
+  to = "https://www.richard.pizza"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "https://richard.rip/*"
+  to = "https://www.richard.pizza"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "https://www.richard.rip/*"
+  to = "https://www.richard.pizza"
+  status = 200
+  force = true
+
   # Redirect from /old-path?id=123 to /new-path.
   # Each combination of query params needs to be
   # defined in a separate [[redirects]] block.
