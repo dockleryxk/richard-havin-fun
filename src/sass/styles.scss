@@ -18,6 +18,10 @@ body {
     background-image: url("/static/images/tile-pizza.gif");
   }
 
+  &.big-rich {
+    background-image: url("/static/images/header.jpg");
+  }
+
   #gimme-pizza {
     display: none;
   }
