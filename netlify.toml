@@ -79,19 +79,19 @@
 #   to = "/blog/:splat"
 
 # A redirect rule with many of the supported properties
-# [[redirects]]
-#   from = "/old-path"
-#   to = "/new-path"
+[[redirects]]
+  from = "/index.html"
+  to = "/"
 
   # The default HTTP status code is 301, but you can
   # define a different one.
-  # status = 302
+  status = 301
 
   # By default, redirects won’t be applied if there’s a file
   # with the same path as the one defined in the `from` property.
   # Setting `force` to `true` will make the redirect rule
   # take precedence over any existing files.
-  # force = true
+  force = true
 
   # Redirect from /old-path?id=123 to /new-path.
   # Each combination of query params needs to be
@@ -142,7 +142,7 @@
 
 [[headers]]
   # Define which paths this specific [[headers]] block will cover.
-  for = "/*"
+  for = "/"
 
   [headers.values]
     X-Frame-Options = "DENY"
