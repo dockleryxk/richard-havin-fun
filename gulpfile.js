@@ -116,9 +116,9 @@ var cleanDist = function (done) {
 
 // Repeated JavaScript tasks
 var jsTasks = lazypipe()
-  .pipe(header, banner.main, { package: package })
-  .pipe(optimizejs)
   // un-comment to keep the un-minified version as well
+  // .pipe(header, banner.main, { package: package })
+  // .pipe(optimizejs)
   // .pipe(dest, paths.scripts.output)
   .pipe(rename, { suffix: ".min" })
   .pipe(uglify)
