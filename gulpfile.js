@@ -17,7 +17,6 @@ var settings = {
   reload: true
 }
 
-
 /**
  * Paths to project folders
  */
@@ -45,7 +44,6 @@ var paths = {
   reload: "./dist/"
 }
 
-
 /**
  * Template for banner to add to file headers
  */
@@ -59,7 +57,6 @@ var banner = {
     " | <%= package.repository.url %>" +
     " */\n"
 }
-
 
 /**
  * Gulp Packages
@@ -78,7 +75,7 @@ var package = require("./package.json")
 var jshint = require("gulp-jshint")
 var stylish = require("jshint-stylish")
 var concat = require("gulp-concat")
-var uglify = require("gulp-terser")
+var terser = require("gulp-terser")
 var optimizejs = require("gulp-optimize-js")
 
 // Styles
@@ -92,7 +89,6 @@ var svgmin = require("gulp-svgmin")
 
 // BrowserSync
 var browserSync = require("browser-sync")
-
 
 /**
  * Gulp Tasks
@@ -121,7 +117,7 @@ var jsTasks = lazypipe()
   // .pipe(optimizejs)
   // .pipe(dest, paths.scripts.output)
   .pipe(rename, { suffix: ".min" })
-  .pipe(uglify)
+  .pipe(terser, { toplevel: true })
   .pipe(optimizejs)
   .pipe(header, banner.main, { package: package })
   .pipe(dest, paths.scripts.output)
@@ -270,7 +266,6 @@ var watchSource = function (done) {
   watch(paths.input, series(exports.default, reloadBrowser))
   done()
 }
-
 
 /**
  * Export Tasks
