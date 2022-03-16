@@ -6,9 +6,7 @@ function setBg() {
   document.body.style.backgroundImage = "url(static/img/" + bg + ")"
 }
 
-window.addEventListener("load", function () {
-  setBg()
-})
+setBg()
 
 var isAudioPlaying = false
 var audioEl = document.getElementById("gimme-pizza")
