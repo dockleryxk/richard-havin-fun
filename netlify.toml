@@ -127,40 +127,30 @@
 
 [[headers]]
   # Define which paths this specific [[headers]] block will cover.
-  for = "/lighthouse.html"
-
-  [headers.values]
-    X-Frame-Options = "DENY"
-    X-XSS-Protection = "1; mode=block"
-
-    # Multi-value headers are expressed with multi-line strings.
-    cache-control = '''
-    max-age=0,
-    no-cache,
-    no-store,
-    must-revalidate'''
-
-[[headers]]
-  # Define which paths this specific [[headers]] block will cover.
-  for = "/"
+  for = "/*"
 
   [headers.values]
     X-Frame-Options = "DENY"
     X-XSS-Protection = "1; mode=block"
     Content-Security-Policy = '''
-    default-src 'self';
-    script-src 'report-sample' 'self' https://www.google-analytics.com/analytics.js;
-    style-src 'report-sample' 'self';
-    object-src 'none';
-    base-uri 'self';
-    connect-src 'self' https://www.google-analytics.com;
-    font-src 'self';
-    frame-src 'self';
-    img-src 'self';
-    manifest-src 'self';
-    media-src 'self';
-    report-uri https://62314225f90d055298b2350a.endpoint.csper.io/?v=0;
-    worker-src 'none';'''
+    default-src https:;
+    script-src https: 'unsafe-inline';
+    style-src https: 'unsafe-inline';'''
+    # too annoying
+    # Content-Security-Policy = '''
+    # default-src 'self';
+    # script-src 'report-sample' 'self' https://www.google-analytics.com/analytics.js;
+    # style-src 'report-sample' 'self';
+    # object-src 'none';
+    # base-uri 'self';
+    # connect-src 'self' https://www.google-analytics.com;
+    # font-src 'self';
+    # frame-src 'self';
+    # img-src 'self';
+    # manifest-src 'self';
+    # media-src 'self';
+    # report-uri https://62314225f90d055298b2350a.endpoint.csper.io/?v=0;
+    # worker-src 'none';'''
 
     # Multi-value headers are expressed with multi-line strings.
     cache-control = '''
