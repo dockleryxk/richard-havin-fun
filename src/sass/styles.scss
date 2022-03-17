@@ -7,19 +7,19 @@ body {
   overflow: hidden;
 
   &.pizza-trippy {
-    background-image: url("/static/images/pizza-trippy.gif");
+    background-image: url("/assets/images/pizza-trippy.gif");
   }
 
   &.trippy-pizza {
-    background-image: url("/static/images/trippy-pizza.gif");
+    background-image: url("/assets/images/trippy-pizza.gif");
   }
 
   &.tile-pizza {
-    background-image: url("/static/images/tile-pizza.gif");
+    background-image: url("/assets/images/tile-pizza.gif");
   }
 
   &.big-rich {
-    background-image: url("/static/images/header.jpg");
+    background-image: url("/assets/images/header.jpg");
   }
 
   #gimme-pizza {
