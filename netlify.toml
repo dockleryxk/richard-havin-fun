@@ -96,49 +96,73 @@
 [[redirects]]
   from = "https://richardjeffords.com"
   to = "https://www.richard.pizza"
-  status = 200
+  status = 301
   force = true
 
 [[redirects]]
   from = "https://richardjeffords.com/*"
   to = "https://www.richard.pizza/:splat"
-  status = 200
+  status = 301
   force = true
 
 [[redirects]]
   from = "https://www.richardjeffords.com"
   to = "https://www.richard.pizza"
-  status = 200
+  status = 301
   force = true
 
 [[redirects]]
   from = "https://www.richardjeffords.com/*"
   to = "https://www.richard.pizza/:splat"
-  status = 200
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://richjeff.com"
+  to = "https://www.richard.pizza"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://richjeff.com/*"
+  to = "https://www.richard.pizza/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://www.richjeff.com"
+  to = "https://www.richard.pizza"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://www.richjeff.com/*"
+  to = "https://www.richard.pizza/:splat"
+  status = 301
   force = true
 
 [[redirects]]
   from = "https://richard.rip"
   to = "https://www.richard.pizza"
-  status = 200
+  status = 301
   force = true
 
 [[redirects]]
   from = "https://richard.rip/*"
   to = "https://www.richard.pizza/:splat"
-  status = 200
+  status = 301
   force = true
 
 [[redirects]]
   from = "https://www.richard.rip"
   to = "https://www.richard.pizza"
-  status = 200
+  status = 301
   force = true
 
 [[redirects]]
   from = "https://www.richard.rip/*"
   to = "https://www.richard.pizza/:splat"
-  status = 200
+  status = 301
   force = true
 
   # Redirect from /old-path?id=123 to /new-path.
