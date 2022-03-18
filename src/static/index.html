@@ -17,6 +17,13 @@ __/\\\________/\\\_________________/\\\\\\_____/\\\\\\______________________/\\\
   <meta name="viewport"
         content="width=device-width, initial-scale=1">
 
+  <link rel="preload"
+        as="style"
+        href="/css/styles.min.css" />
+  <link rel="preload"
+        as="script"
+        href="/js/app.min.js" />
+
   <!-- Search Engine -->
   <title>Richard Jeffords</title>
   <meta name="description"
@@ -78,12 +85,12 @@ __/\\\________/\\\_________________/\\\\\\_____/\\\\\\______________________/\\\
 
   <!-- CSS -->
   <link rel="stylesheet"
-        href="css/styles.min.css">
+        href="/css/styles.min.css">
 
   <!-- Analytics -->
   <script async
           defer
-          src="js/ga.min.js"></script>
+          src="/js/ga.min.js"></script>
 </head>
 
 <body class="untouched">
@@ -111,13 +118,9 @@ __/\\\________/\\\_________________/\\\\\\_____/\\\\\\______________________/\\\
 
   <audio id="gimme-pizza"
          class="d-none">
-    <source src="assets/audio/gimme-pizzaaaaaa.mp3"
+    <source src="/assets/audio/gimme-pizzaaaaaa.mp3"
             type="audio/mpeg">
   </audio>
-
-  <script async
-          defer
-          src="js/app.min.js"></script>
 
   <script type="application/ld+json">
     {
@@ -154,6 +157,10 @@ __/\\\________/\\\_________________/\\\\\\_____/\\\\\\______________________/\\\
       "publisher": "Richard Jeffords"
     }
   </script>
+
+  <script async
+          defer
+          src="/js/app.min.js"></script>
 </body>
 
 </html>
