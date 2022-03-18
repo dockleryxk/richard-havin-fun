@@ -18,7 +18,8 @@ body {
     background-image: url("/assets/images/tile-pizza.gif");
   }
 
-  &.big-rich {
+  &.big-rich,
+  &.untouched {
     background-image: url("/assets/images/header.jpg");
   }
 

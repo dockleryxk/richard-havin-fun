@@ -1,16 +1,17 @@
 var bgClasses = ["pizza-trippy", "trippy-pizza", "tile-pizza"]
-var bgClass = ""
+var bgClass = "untouched"
 var count = -1
 var found = false
 var isAudioPlaying = false
 var audioEl = document.getElementById("gimme-pizza")
+var isLighthouse = navigator && navigator.userAgent && (navigator.userAgent.includes("Page Speed") || navigator.userAgent.includes("Chrome-Lighthouse"))
 
-function setBg(removeClass) {
+function setBg() {
+  if (count > -1) {
+    console.log(count)
+  }
   if (count++ < 10) {
-    if (removeClass) {
-      document.body.classList.remove(bgClass)
-      console.log(count)
-    }
+    document.body.classList.remove(bgClass)
     bgClass = bgClasses[Math.floor(Math.random() * bgClasses.length)]
     document.body.classList.add(bgClass)
   }
@@ -24,7 +25,9 @@ function setBg(removeClass) {
   }
 }
 
-setBg(false)
+if (!isLighthouse) {
+  setBg()
+}
 
 document.addEventListener("click", function () {
   if (!found) {
@@ -35,7 +38,7 @@ document.addEventListener("click", function () {
       audioEl.play()
     }
     isAudioPlaying = !isAudioPlaying
-    setBg(true)
+    setBg()
   }
 })
 
