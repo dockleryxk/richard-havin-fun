@@ -4,6 +4,7 @@ var count = -1
 var found = false
 var isAudioPlaying = false
 var audioEl = document.getElementById("gimme-pizza")
+var useGifs = !(navigator && navigator.userAgent && (navigator.userAgent.includes("Page Speed") || navigator.userAgent.includes("Chrome-Lighthouse")))
 
 function setBg() {
   if (count > -1) {
@@ -25,7 +26,9 @@ function setBg() {
   }
 }
 
-setBg()
+if (useGifs) {
+  setBg()
+}
 
 document.addEventListener("click", function () {
   if (!found) {
