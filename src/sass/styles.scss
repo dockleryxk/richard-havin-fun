@@ -5,6 +5,7 @@ body {
   height: 100vh;
   width: 100vw;
   overflow: hidden;
+  font-family: sans-serif;
 
   &.pizza-trippy {
     background-image: url("/assets/images/pizza-trippy.gif");
@@ -22,8 +23,22 @@ body {
   &.untouched {
     background-image: url("/assets/images/header.jpg");
   }
+}
 
-  #gimme-pizza {
-    display: none;
+.container {
+  margin: 0 auto;
+  padding: 20px;
+
+  p {
+    margin: 10px auto;
   }
+}
+
+.d-none {
+  display: none;
+}
+
+.disclaimer {
+  font-size: 0.7rem;
+  font-style: italic;
 }

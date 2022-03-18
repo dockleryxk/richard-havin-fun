@@ -4,7 +4,6 @@ var count = -1
 var found = false
 var isAudioPlaying = false
 var audioEl = document.getElementById("gimme-pizza")
-var isLighthouse = navigator && navigator.userAgent && (navigator.userAgent.includes("Page Speed") || navigator.userAgent.includes("Chrome-Lighthouse"))
 
 function setBg() {
   if (count > -1) {
@@ -22,12 +21,11 @@ function setBg() {
     audioEl.play()
     console.log("that's a lot of clicking you did there")
     console.log("enjoy the tunes")
+    document.getElementById("main").classList.remove("d-none")
   }
 }
 
-if (!isLighthouse) {
-  setBg()
-}
+setBg()
 
 document.addEventListener("click", function () {
   if (!found) {
