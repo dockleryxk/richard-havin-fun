@@ -33,7 +33,7 @@ if (useGifs) {
 document.addEventListener("click", function () {
   if (count++ < 10) {
     console.log(count)
-    isAudioPlaying && count < 10 ? audioEl.pause() : audioEl.play()
+    isAudioPlaying && count < 10 ? audioEl.pause() : audioEl.play() // jshint ignore:line
     isAudioPlaying = !isAudioPlaying
     setBg()
   }
