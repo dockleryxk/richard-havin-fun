@@ -52,15 +52,15 @@ var paths = {
 var banner = {
   main:
     "/*!" +
-    " <%= package.name %> v<%= package.version %>" +
-    " | (c) " + new Date().getFullYear() + " <%= package.author.name %>" +
-    " | <%= package.license %> License" +
-    " | <%= package.repository.url %>" +
+    " <%= packageJson.name %> v<%= packageJson.version %>" +
+    " | (c) " + new Date().getFullYear() + " <%= packageJson.author.name %>" +
+    " | <%= packageJson.license %> License" +
+    " | <%= packageJson.repository.url %>" +
     " */\n"
 }
 
 /**
- * Gulp Packages
+ * Gulp packageJsons
  */
 
 // General
@@ -71,7 +71,7 @@ var lazypipe = require("lazypipe")
 var rename = require("gulp-rename")
 var header = require("gulp-header")
 var replace = require("gulp-replace")
-var package = require("./package.json")
+var packageJson = require("./package.json")
 
 // Scripts
 var jshint = require("gulp-jshint")
@@ -118,13 +118,13 @@ var cleanDist = function (done) {
 // Repeated JavaScript tasks
 var jsTasks = lazypipe()
   // un-comment to keep the un-minified version as well
-  // .pipe(header, banner.main, { package: package })
+  // .pipe(header, banner.main, { packageJson: packageJson })
   // .pipe(optimizejs)
   // .pipe(dest, paths.scripts.output)
   .pipe(rename, { suffix: ".min" })
   .pipe(terser, { toplevel: true })
   .pipe(optimizejs)
-  .pipe(header, banner.main, { package: package })
+  .pipe(header, banner.main, { packageJson: packageJson })
   .pipe(dest, paths.scripts.output)
 
 // Lint, minify, and concatenate scripts
@@ -176,7 +176,7 @@ var lintScripts = function (done) {
 
   // Lint scripts
   return src(paths.scripts.input)
-    .pipe(jshint(package.jshintConfig))
+    .pipe(jshint(packageJson.jshintConfig))
     .pipe(jshint.reporter("jshint-stylish"))
 }
 
@@ -199,7 +199,7 @@ var buildStyles = function (done) {
         remove: true
       })
     ]))
-    .pipe(header(banner.main, { package: package }))
+    .pipe(header(banner.main, { packageJson: packageJson }))
     // un-comment to keep the un-minified version as well
     // .pipe(dest(paths.styles.output))
     .pipe(rename({ suffix: ".min" }))
