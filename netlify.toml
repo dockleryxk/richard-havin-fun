@@ -204,10 +204,10 @@
   [headers.values]
     X-Frame-Options = "DENY"
     X-XSS-Protection = "1; mode=block"
-    Content-Security-Policy = '''
-    default-src https:;
-    script-src https: 'unsafe-inline';
-    style-src https: 'unsafe-inline';'''
+    # Content-Security-Policy = '''
+    # default-src https:;
+    # script-src https: 'unsafe-inline';
+    # style-src https: 'unsafe-inline';'''
     # too annoying
     # Content-Security-Policy = '''
     # default-src 'self';
