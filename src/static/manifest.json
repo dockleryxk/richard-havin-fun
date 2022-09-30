@@ -1,5 +1,13 @@
 {
   "name": "richard.pizza",
+  "short_name": "richard.pizza",
+  "description": "Richard Jeffords is one of three co-founders of StoragePug",
+  "dir": "auto",
+  "lang": "en-US",
+  "display": "standalone",
+  "orientation": "portrait",
+  "scope": "/",
+  "start_url": "/",
   "icons": [
     {
       "src": "/assets/icons/android-chrome-144x144.png",
