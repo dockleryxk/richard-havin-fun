@@ -43,5 +43,6 @@
     "lazypipe": "^1.0.2",
     "node-sass": "^7.0.1",
     "postcss": "^8.4.11"
-  }
+  },
+  "dependencies": {}
 }
