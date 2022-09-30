@@ -20,7 +20,7 @@
     "asi": true
   },
   "devDependencies": {
-    "@netlify/plugin-lighthouse": "^2.1.3",
+    "@netlify/plugin-lighthouse": "^3.6.0",
     "autoprefixer": "^10.4.3",
     "browser-sync": "^2.27.9",
     "cssnano": "^5.1.4",
