@@ -27,6 +27,7 @@ function setBg() {
 }
 
 if (useGifs) {
+  document.getElementById("main").classList.add("d-none")
   setBg()
 }
 
