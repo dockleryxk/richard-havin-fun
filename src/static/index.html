@@ -21,6 +21,12 @@ __/\\\________/\\\_________________/\\\\\\_____/\\\\\\______________________/\\\
   <link rel="preload"
         as="style"
         href="/css/styles.min.css" />
+  <!-- Preload the LCP image with a high fetchpriority so it starts loading with the stylesheet. -->
+  <link rel="preload"
+        fetchpriority="high"
+        as="image"
+        href="/assets/images/header.webp"
+        type="image/webp">
   <link rel="preload"
         as="script"
         href="/js/modernizr.min.js" />
@@ -32,11 +38,6 @@ __/\\\________/\\\_________________/\\\\\\_____/\\\\\\______________________/\\\
         href="https://fonts.googleapis.com/css2?family=Raleway:wght@400&lang=en&display=swap">
   <link rel="preconnect"
         href="https://fonts.gstatic.com/">
-  <link rel="preconnect"
-        href="https://fonts.gstatic.com/"
-        crossorigin>
-  <link rel="preconnect"
-        href="https://www.googletagmanager.com">
 
   <!-- Search Engine -->
   <title>Richard Jeffords</title>
