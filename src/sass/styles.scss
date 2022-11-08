@@ -7,45 +7,39 @@ body {
   overflow: hidden;
   font-family: "Raleway", sans-serif;
 
-  &.pizza-trippy {
-    background-image: url("/assets/images/pizza-trippy.gif");
+  #pizza-animations {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100vw;
+    object-fit: cover;
   }
 
-  &.trippy-pizza {
-    background-image: url("/assets/images/trippy-pizza.gif");
-  }
+  .container {
+    margin: 0 auto;
+    padding: 20px;
 
-  &.tile-pizza {
-    background-image: url("/assets/images/tile-pizza.gif");
-  }
+    p {
+      margin: 10px auto;
 
-  &.untouched,
-  &.big-rich {
-    background-image: url("/assets/images/header.webp");
+      &.disclaimer {
+        font-size: 0.7rem;
+        font-style: italic;
+      }
+    }
   }
+}
+
+.webp body {
+  background-image: url("/assets/images/header.webp");
 }
 
 .no-webp body {
-  &.untouched,
-  &.big-rich {
-    background-image: url("/assets/images/header.jpg");
-  }
-}
-
-.container {
-  margin: 0 auto;
-  padding: 20px;
-
-  p {
-    margin: 10px auto;
-  }
+  background-image: url("/assets/images/header.jpg");
 }
 
 .d-none {
-  display: none;
-}
-
-.disclaimer {
-  font-size: 0.7rem;
-  font-style: italic;
+  display: none !important;
 }
