@@ -84,7 +84,7 @@ var optimizejs = require("gulp-optimize-js")
 var sitemap = require("gulp-sitemap")
 
 // Styles
-var sass = require("gulp-sass")(require("node-sass"))
+var sass = require("gulp-sass")(require("sass"))
 var postcss = require("gulp-postcss")
 var prefix = require("autoprefixer")
 var minify = require("cssnano")
@@ -192,7 +192,7 @@ var buildStyles = function (done) {
     .pipe(sass({
       outputStyle: "expanded",
       sourceComments: true
-    }))
+    }).on("error", sass.logError))
     .pipe(postcss([
       prefix({
         cascade: true,

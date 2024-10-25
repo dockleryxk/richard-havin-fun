@@ -58,6 +58,17 @@ function swapVideo() {
       readyState: videoEl.readyState,
     }, null, 2))
   }
+  else {
+    try {
+      gtag("event", "pizza_click", {
+        "event_category": "pizza_v1",
+        "event_label": selectedVideoSource,
+        "value": count
+      })
+    } catch (e) {
+      console.error(e)
+    }
+  }
 }
 
 function removeVideo() {
@@ -110,18 +121,6 @@ document.addEventListener("click", function () {
     if (count === 1) {
       document.body.classList.remove("untouched")
       document.body.classList.add("touched")
-    }
-  }
-
-  if (!isLocalhost) {
-    try {
-      gtag("event", "pizza_click", {
-        "event_category": "pizza_v1",
-        "event_label": bgClass,
-        "value": count
-      })
-    } catch (e) {
-      console.error(e)
     }
   }
 })

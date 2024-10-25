@@ -41,8 +41,8 @@
     "jshint": "^2.13.4",
     "jshint-stylish": "^2.2.1",
     "lazypipe": "^1.0.2",
-    "node-sass": "^7.0.1",
-    "postcss": "^8.4.11"
+    "postcss": "^8.4.11",
+    "sass": "^1.80.4"
   },
   "dependencies": {}
 }
