@@ -12,6 +12,9 @@
     "start": "gulp watch",
     "build": "gulp"
   },
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "browserslist": [
     "last 2 versions",
     "> 0.25%"
@@ -20,7 +23,7 @@
     "asi": true
   },
   "devDependencies": {
-    "@netlify/plugin-lighthouse": "^3.6.0",
+    "@netlify/plugin-lighthouse": "^6.0.0",
     "autoprefixer": "^10.4.3",
     "browser-sync": "^2.27.9",
     "cssnano": "^5.1.4",
