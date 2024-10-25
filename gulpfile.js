@@ -190,7 +190,7 @@ var buildStyles = function (done) {
   // Run tasks on all Sass files
   return src(paths.styles.input)
     .pipe(sass({
-      outputStyle: "expanded",
+      outputStyle: "compressed",
       sourceComments: true
     }).on("error", sass.logError))
     .pipe(postcss([
