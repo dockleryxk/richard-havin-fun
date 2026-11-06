@@ -19,7 +19,8 @@ Static site for richard.pizza. Gulp build, Netlify deploy. Source is small: one 
 
 ## Site behavior
 - The page is an easter egg. An inline script in `<head>` adds `html.pizza` before first paint unless the visitor prefers reduced motion. Under `.pizza`, CSS hides `#main` and shows a full-screen video with a transparent full-screen button over it.
-- Each press of that button (click, Enter, or Space) swaps the clip and toggles the song. The tenth press, or the keyboard-only "Skip to content" link, removes `.pizza`, shows `#main` (which includes the song player), and moves focus to `#main`.
+- There is one `<video class="pizza-animation">` per clip, all stacked full-screen. `app.js` adds each one's sources (so reduced-motion visitors download nothing), lets them autoplay, pauses the inactive ones at their first frame, and raises one with `.is-active`. Inactive clips are `opacity: 0`, not `display: none`: WebKit will not load or autoplay a video without a layout box.
+- Each press of that button (click, Enter, or Space) raises a different clip and toggles the song. Never swap a clip by changing one element's sources and calling `load()`: that rebuilds the video layer, and because the clips have three different aspect ratios WebKit paints the new clip's first frames letterboxed inside the old clip's box (visible on iOS as the video briefly not filling the screen). The tenth press, or the keyboard-only "Skip to content" link, removes `.pizza`, shows `#main` (which includes the song player), and moves focus to `#main`.
 - Fallbacks: if `app.min.js` fails to load, its `onerror` removes `.pizza`. If the skip link is followed without `app.js` handling it, `:has(#main:target)` CSS ends the intro.
 - GA events: `pizza_click` for presses 1 to 9 (value = press number), `found_content` on the tenth press, `skip_pizza` from the skip link (value = presses so far).
 - No user-agent detection. Lighthouse audits the same page visitors get.
@@ -27,6 +28,7 @@ Static site for richard.pizza. Gulp build, Netlify deploy. Source is small: one 
 
 ## Assets
 - Each clip ships as AV1 (`.av1.mp4`), VP9 (`.webm`), and H.264 (`.mp4`); `app.js` lists them in that order and the browser plays the first it supports. The AV1 type string declares level 3.0, which covers all three clips.
+- The clips have different aspect ratios: `pizza-trippy` 4:3, `trippy-pizza` 1:1, `tile-pizza` 2:1. `object-fit: cover` handles that as long as each clip keeps its own element.
 - The clips were encoded from GIFs that are no longer in `src/`; get them with `git show 37cb66f:src/static/assets/images/<clip>.gif > <clip>.gif` to re-encode.
 - The clips use the BT.601 matrix. Tag AV1 encodes with `-colorspace smpte170m -color_primaries bt709 -color_trc iec61966-2-1 -color_range tv`, or Chrome shows shifted colours.
 - Icons are rendered from Noto Emoji's fire SVG (Apache 2.0); `src/static/assets/icons/LICENSE-noto-emoji.txt` must ship with them.

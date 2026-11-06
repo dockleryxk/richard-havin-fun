@@ -66,15 +66,17 @@ body {
 }
 
 // Intro controls are hidden unless the intro is running
-#pizza-animations,
+.pizza-animation,
 #pizza-button,
 .skip-link {
   display: none;
 }
 
 .pizza {
-  // Full-screen clip; the black backdrop keeps the photo hidden while a new clip loads
-  #pizza-animations {
+  // Every clip is a full-screen element stacked under the button; the active one is opaque and the rest sit
+  // transparent beneath it. They keep a layout box (not display: none) so WebKit loads and autoplays them.
+  // The black backdrop keeps the photo hidden while the first clip loads.
+  .pizza-animation {
     display: block;
     position: fixed;
     top: 0;
@@ -83,6 +85,11 @@ body {
     height: 100%;
     object-fit: cover;
     background-color: #000;
+    opacity: 0;
+
+    &.is-active {
+      opacity: 1;
+    }
   }
 
   // Transparent full-screen button that receives every click, Enter, and Space
@@ -135,7 +142,7 @@ body {
       display: block;
     }
 
-    #pizza-animations,
+    .pizza-animation,
     #pizza-button,
     .skip-link {
       display: none;

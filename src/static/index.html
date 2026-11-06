@@ -74,9 +74,15 @@ __/\\\________/\\\_________________/\\\\\\_____/\\\\\\______________________/\\\
 </head>
 
 <body>
-  <!-- Pizza intro: keyboard skip link, full-screen clip, and the full-screen button that advances it -->
+  <!-- Pizza intro: keyboard skip link, one full-screen clip element per animation, and the full-screen button
+       that advances it. app.js adds each element's sources and raises one clip at a time; a clip is never
+       reloaded, because reloading rebuilds its video layer and WebKit paints the first frames letterboxed. -->
   <a href="#main" id="skip-pizza" class="skip-link">Skip to content</a>
-  <video id="pizza-animations" muted loop autoplay playsinline disableremoteplayback aria-hidden="true">
+  <video class="pizza-animation" data-clip="pizza-trippy" muted loop autoplay playsinline disableremoteplayback aria-hidden="true">
+  </video>
+  <video class="pizza-animation" data-clip="trippy-pizza" muted loop autoplay playsinline disableremoteplayback aria-hidden="true">
+  </video>
+  <video class="pizza-animation" data-clip="tile-pizza" muted loop autoplay playsinline disableremoteplayback aria-hidden="true">
   </video>
   <button type="button" id="pizza-button" aria-label="More pizza"></button>
 

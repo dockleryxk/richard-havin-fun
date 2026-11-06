@@ -1,8 +1,6 @@
-// Pizza intro easter egg: each press of the full-screen button swaps a looping clip and toggles the song.
+// Pizza intro easter egg: each press of the full-screen button shows a different looping clip and toggles the song.
 // The tenth press (or the skip link) reveals #main. Runs only when the inline head script set html.pizza.
 (function () {
-  var videoSources = ["pizza-trippy", "trippy-pizza", "tile-pizza"]
-  var currentIndex
   var count = 0
   var isProd = location.hostname === "www.richard.pizza"
   var fontStyles = "font-family:'Raleway', sans-serif; font-weight: bold;"
@@ -10,51 +8,70 @@
   var rootEl = document.documentElement
   var mainEl = document.getElementById("main")
   var audioEl = document.getElementById("gimme-pizza")
-  var videoEl = document.getElementById("pizza-animations")
+  // One <video> per clip, declared in the markup; app.js adds the sources and raises one clip at a time
+  var videoEls = document.querySelectorAll(".pizza-animation")
+  var activeEl = null
   var pizzaButton = document.getElementById("pizza-button")
   var skipLink = document.getElementById("skip-pizza")
-  var av1SourceEl
-  var webmSourceEl
-  var mp4SourceEl
 
-  // Pick a clip index different from the one playing now
+  // Pick a clip element different from the one showing now
   function getRandomVideo() {
-    var newIndex = currentIndex
+    var nextEl = activeEl
 
-    while (newIndex === currentIndex) {
-      newIndex = Math.floor(Math.random() * videoSources.length)
+    while (nextEl === activeEl) {
+      nextEl = videoEls[Math.floor(Math.random() * videoEls.length)]
     }
 
-    currentIndex = newIndex
-    return videoSources[newIndex]
+    return nextEl
   }
 
-  // Create a <source> with a fixed type; swapVideo only changes its src. The browser takes the first type it can play.
-  function addSource(type) {
+  // Add a <source> with a fixed type; the browser takes the first type it can play
+  function addSource(videoEl, type, src) {
     var sourceEl = document.createElement("source")
     sourceEl.setAttribute("type", type)
+    sourceEl.setAttribute("src", src)
     videoEl.appendChild(sourceEl)
-    return sourceEl
   }
 
-  // Point the video at a new clip and return its name
+  // Raise a different clip and return its name. Nothing is reloaded: swapping sources on one element rebuilds
+  // its video layer, and WebKit paints the new clip's first frames letterboxed inside the old clip's box.
   function swapVideo() {
-    var selected = getRandomVideo()
+    var nextEl = getRandomVideo()
 
-    av1SourceEl.setAttribute("src", "/assets/videos/" + selected + ".av1.mp4")
-    webmSourceEl.setAttribute("src", "/assets/videos/" + selected + ".webm")
-    mp4SourceEl.setAttribute("src", "/assets/videos/" + selected + ".mp4")
-    videoEl.load()
-    // A later press can interrupt this play() with load(); the resulting AbortError is expected
-    videoEl.play().catch(function () {})
+    if (activeEl) {
+      activeEl.pause()
+      activeEl.classList.remove("is-active")
+    }
 
-    return selected
+    activeEl = nextEl
+    activeEl.classList.add("is-active")
+    // A quick next press pauses this element before play() settles; the resulting AbortError is expected
+    activeEl.play().catch(function () {})
+
+    return activeEl.getAttribute("data-clip")
+  }
+
+  // Give every clip its sources so it loads and autoplays, then park the inactive ones on their first frame.
+  // Smallest first: AV1 (level 3.0 covers every clip), then VP9 WebM, then H.264 MP4.
+  function loadVideos() {
+    Array.prototype.forEach.call(videoEls, function (videoEl) {
+      var clip = "/assets/videos/" + videoEl.getAttribute("data-clip")
+
+      videoEl.addEventListener("loadeddata", function () {
+        if (videoEl !== activeEl) {
+          videoEl.pause()
+        }
+      })
+      addSource(videoEl, "video/mp4; codecs=av01.0.04M.08", clip + ".av1.mp4")
+      addSource(videoEl, "video/webm", clip + ".webm")
+      addSource(videoEl, "video/mp4", clip + ".mp4")
+    })
   }
 
   // End the intro: show the content (with the song player) and move focus to it
   function reveal() {
     rootEl.classList.remove("pizza")
-    videoEl.pause()
+    activeEl.pause()
     pizzaButton.removeEventListener("click", onPizza)
     mainEl.focus()
 
@@ -92,12 +109,9 @@
     }
   }
 
-  // Start the first clip and wire up the controls
+  // Load every clip, raise the first one, and wire up the controls
   if (rootEl.classList.contains("pizza")) {
-    // Smallest first: AV1 (level 3.0 covers every clip), then VP9 WebM, then H.264 MP4
-    av1SourceEl = addSource("video/mp4; codecs=av01.0.04M.08")
-    webmSourceEl = addSource("video/webm")
-    mp4SourceEl = addSource("video/mp4")
+    loadVideos()
     swapVideo()
     pizzaButton.addEventListener("click", onPizza)
     skipLink.addEventListener("click", function (event) {
