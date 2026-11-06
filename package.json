@@ -29,7 +29,8 @@
     "browser": true,
     "devel": true,
     "globals": {
-      "gtag": false
+      "gtag": false,
+      "loadGtag": false
     }
   },
   "devDependencies": {

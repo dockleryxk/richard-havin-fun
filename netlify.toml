@@ -68,9 +68,10 @@
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
 
-# Media and fonts change rarely, so browsers may reuse them for a week; rename a file when replacing it
+# Media and fonts never change in place, so browsers may reuse them for a year without revalidating;
+# rename a file when replacing it
 [[headers]]
   for = "/assets/*"
 
   [headers.values]
-    Cache-Control = "public, max-age=604800"
+    Cache-Control = "public, max-age=31536000, immutable"

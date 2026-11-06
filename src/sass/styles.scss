@@ -18,13 +18,18 @@
   src: url("/assets/fonts/raleway-latin-400-italic.woff2") format("woff2");
 }
 
-// Full-height page with the photo behind the content; AVIF where supported, WebP otherwise
+// The photo behind the content; AVIF where supported, WebP otherwise
+@mixin background-photo {
+  background-image: url("/assets/images/header.webp");
+  background-image: image-set(url("/assets/images/header.avif") type("image/avif"), url("/assets/images/header.webp") type("image/webp"));
+}
+
+// Full-height page. The photo is applied only once the intro is over (further down), so it is not fetched
+// while the clips cover it.
 body {
   margin: 0;
   min-height: 100vh;
   min-height: 100dvh;
-  background-image: url("/assets/images/header.webp");
-  background-image: image-set(url("/assets/images/header.avif") type("image/avif"), url("/assets/images/header.webp") type("image/webp"));
   background-size: cover;
   background-repeat: no-repeat;
   background-position: 30% 50%;
@@ -65,17 +70,21 @@ body {
   }
 }
 
-// Intro controls are hidden unless the intro is running
+// Intro controls are hidden unless the intro is running, and the photo shows only then
 .pizza-animation,
 #pizza-button,
 .skip-link {
   display: none;
 }
 
+html:not(.pizza) body {
+  @include background-photo;
+}
+
 .pizza {
   // Every clip is a full-screen element stacked under the button; the active one is opaque and the rest sit
   // transparent beneath it. They keep a layout box (not display: none) so WebKit loads and autoplays them.
-  // The black backdrop keeps the photo hidden while the first clip loads.
+  // The black backdrop covers the white page while the first clip loads.
   .pizza-animation {
     display: block;
     position: fixed;
@@ -138,6 +147,10 @@ body {
 
   // Following the skip link without app.js (#main targeted) still ends the intro
   &:has(#main:target) {
+    body {
+      @include background-photo;
+    }
+
     #main {
       display: block;
     }

@@ -23,18 +23,22 @@ __/\\\________/\\\_________________/\\\\\\_____/\\\\\\______________________/\\\
       document.documentElement.classList.add("pizza")
     }
 
-    // GA4: gtag queues events from the start; gtag.js loads after the page, on the production host only
+    // GA4: gtag queues events from the start. gtag.js itself loads on the production host only, when app.js
+    // calls loadGtag (after the first clip paints, or at once without the intro); a timer after load is the fallback
     window.dataLayer = window.dataLayer || []
     function gtag() { dataLayer.push(arguments) }
+    function loadGtag() {
+      if (loadGtag.done || location.hostname !== "www.richard.pizza") { return }
+      loadGtag.done = true
+      var script = document.createElement("script")
+      script.async = true
+      script.src = "https://www.googletagmanager.com/gtag/js?id=G-9VGYSVTVXY"
+      document.head.appendChild(script)
+    }
     if (location.hostname === "www.richard.pizza") {
       gtag("js", new Date())
       gtag("config", "G-9VGYSVTVXY")
-      window.addEventListener("load", function () {
-        var script = document.createElement("script")
-        script.async = true
-        script.src = "https://www.googletagmanager.com/gtag/js?id=G-9VGYSVTVXY"
-        document.head.appendChild(script)
-      })
+      window.addEventListener("load", function () { setTimeout(loadGtag, 4000) })
     }
   </script>
 

@@ -33,6 +33,24 @@
     videoEl.appendChild(sourceEl)
   }
 
+  // Give a clip its sources so it loads and autoplays, then park it on its first frame unless it is the active
+  // one. Smallest first: AV1 (level 3.0 covers every clip), then VP9 WebM, then H.264 MP4. A second call is a no-op.
+  function loadVideo(videoEl) {
+    var clip = "/assets/videos/" + videoEl.getAttribute("data-clip")
+
+    if (videoEl.querySelector("source")) {
+      return
+    }
+    videoEl.addEventListener("loadeddata", function () {
+      if (videoEl !== activeEl) {
+        videoEl.pause()
+      }
+    })
+    addSource(videoEl, "video/mp4; codecs=av01.0.04M.08", clip + ".av1.mp4")
+    addSource(videoEl, "video/webm", clip + ".webm")
+    addSource(videoEl, "video/mp4", clip + ".mp4")
+  }
+
   // Raise a different clip and return its name. Nothing is reloaded: swapping sources on one element rebuilds
   // its video layer, and WebKit paints the new clip's first frames letterboxed inside the old clip's box.
   function swapVideo() {
@@ -45,27 +63,18 @@
 
     activeEl = nextEl
     activeEl.classList.add("is-active")
+    loadVideo(activeEl)
     // A quick next press pauses this element before play() settles; the resulting AbortError is expected
     activeEl.play().catch(function () {})
 
     return activeEl.getAttribute("data-clip")
   }
 
-  // Give every clip its sources so it loads and autoplays, then park the inactive ones on their first frame.
-  // Smallest first: AV1 (level 3.0 covers every clip), then VP9 WebM, then H.264 MP4.
-  function loadVideos() {
-    Array.prototype.forEach.call(videoEls, function (videoEl) {
-      var clip = "/assets/videos/" + videoEl.getAttribute("data-clip")
-
-      videoEl.addEventListener("loadeddata", function () {
-        if (videoEl !== activeEl) {
-          videoEl.pause()
-        }
-      })
-      addSource(videoEl, "video/mp4; codecs=av01.0.04M.08", clip + ".av1.mp4")
-      addSource(videoEl, "video/webm", clip + ".webm")
-      addSource(videoEl, "video/mp4", clip + ".mp4")
-    })
+  // Once the first clip has painted, fetch the other clips and the analytics script; loaded any earlier they
+  // compete with that first clip for bandwidth and push back the largest contentful paint
+  function onFirstFrame() {
+    Array.prototype.forEach.call(videoEls, loadVideo)
+    loadGtag()
   }
 
   // End the intro: show the content (with the song player) and move focus to it
@@ -109,10 +118,11 @@
     }
   }
 
-  // Load every clip, raise the first one, and wire up the controls
+  // Raise the first clip (loading only that one until it paints) and wire up the controls; without the intro
+  // there is nothing to wait for, so analytics loads now
   if (rootEl.classList.contains("pizza")) {
-    loadVideos()
     swapVideo()
+    activeEl.addEventListener("loadeddata", onFirstFrame, { once: true })
     pizzaButton.addEventListener("click", onPizza)
     skipLink.addEventListener("click", function (event) {
       event.preventDefault()
@@ -120,5 +130,7 @@
       reveal()
     })
     console.log("Welcome to my website! Try clicking.")
+  } else {
+    loadGtag()
   }
 })()

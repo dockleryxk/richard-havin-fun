@@ -19,12 +19,13 @@ Static site for richard.pizza. Gulp build, Netlify deploy. Source is small: one 
 
 ## Site behavior
 - The page is an easter egg. An inline script in `<head>` adds `html.pizza` before first paint unless the visitor prefers reduced motion. Under `.pizza`, CSS hides `#main` and shows a full-screen video with a transparent full-screen button over it.
-- There is one `<video class="pizza-animation">` per clip, all stacked full-screen. `app.js` adds each one's sources (so reduced-motion visitors download nothing), lets them autoplay, pauses the inactive ones at their first frame, and raises one with `.is-active`. Inactive clips are `opacity: 0`, not `display: none`: WebKit will not load or autoplay a video without a layout box.
+- There is one `<video class="pizza-animation">` per clip, all stacked full-screen. `app.js` adds the sources (so reduced-motion visitors download nothing), lets the clips autoplay, pauses the inactive ones at their first frame, and raises one with `.is-active`. Inactive clips are `opacity: 0`, not `display: none`: WebKit will not load or autoplay a video without a layout box.
+- Only the first clip gets its sources up front. The other two, and `gtag.js`, load on that clip's `loadeddata`, so nothing competes with it for bandwidth before the largest contentful paint (Lighthouse counts every request that starts before the LCP paint against it). A press before the next clip has loaded shows its black backdrop briefly. The body background photo is likewise applied only outside `.pizza`, so it is not fetched during the intro.
 - Each press of that button (click, Enter, or Space) raises a different clip and toggles the song. Never swap a clip by changing one element's sources and calling `load()`: that rebuilds the video layer, and because the clips have three different aspect ratios WebKit paints the new clip's first frames letterboxed inside the old clip's box (visible on iOS as the video briefly not filling the screen). The tenth press, or the keyboard-only "Skip to content" link, removes `.pizza`, shows `#main` (which includes the song player), and moves focus to `#main`.
 - Fallbacks: if `app.min.js` fails to load, its `onerror` removes `.pizza`. If the skip link is followed without `app.js` handling it, `:has(#main:target)` CSS ends the intro.
 - GA events: `pizza_click` for presses 1 to 9 (value = press number), `found_content` on the tenth press, `skip_pizza` from the skip link (value = presses so far).
 - No user-agent detection. Lighthouse audits the same page visitors get.
-- GA: `gtag` queues into `dataLayer` everywhere, but `gtag.js` is only loaded on `www.richard.pizza`, after the window `load` event. Events from other hosts go nowhere.
+- GA: `gtag` queues into `dataLayer` everywhere, but `gtag.js` is only loaded on `www.richard.pizza`, by `loadGtag` (a global in the head script, guarded against a second call). `app.js` calls it after the first clip paints, or immediately when there is no intro; a timer after the window `load` event is the fallback if `app.js` never does. Events from other hosts go nowhere.
 
 ## Assets
 - Each clip ships as AV1 (`.av1.mp4`), VP9 (`.webm`), and H.264 (`.mp4`); `app.js` lists them in that order and the browser plays the first it supports. The AV1 type string declares level 3.0, which covers all three clips.
@@ -36,7 +37,7 @@ Static site for richard.pizza. Gulp build, Netlify deploy. Source is small: one 
 ## Deploy
 - Netlify builds `main` with `npm run build` and publishes `dist/`. The Lighthouse plugin runs on every deploy and reports scores without blocking.
 - Redirects for the alternate domains and the `netlify.app` subdomain, and the security and cache headers, live in `netlify.toml`.
-- `/assets/*` is cached for a week. Rename a media or font file when replacing its contents.
+- `/assets/*` is cached for a year as immutable, so browsers never revalidate it. Rename a media or font file when replacing its contents, or repeat visitors keep the old one.
 
 ## Commits
 - Prefixes in use: `fix:`, `improvement:`, `chore:`. Optional scope in parens, e.g. `chore(netlify):`.
