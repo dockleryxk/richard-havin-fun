@@ -25,6 +25,12 @@ Static site for richard.pizza. Gulp build, Netlify deploy. Source is small: one 
 - No user-agent detection. Lighthouse audits the same page visitors get.
 - GA: `gtag` queues into `dataLayer` everywhere, but `gtag.js` is only loaded on `www.richard.pizza`, after the window `load` event. Events from other hosts go nowhere.
 
+## Assets
+- Each clip ships as AV1 (`.av1.mp4`), VP9 (`.webm`), and H.264 (`.mp4`); `app.js` lists them in that order and the browser plays the first it supports. The AV1 type string declares level 3.0, which covers all three clips.
+- The clips were encoded from GIFs that are no longer in `src/`; get them with `git show 37cb66f:src/static/assets/images/<clip>.gif > <clip>.gif` to re-encode.
+- The clips use the BT.601 matrix. Tag AV1 encodes with `-colorspace smpte170m -color_primaries bt709 -color_trc iec61966-2-1 -color_range tv`, or Chrome shows shifted colours.
+- Icons are rendered from Noto Emoji's fire SVG (Apache 2.0); `src/static/assets/icons/LICENSE-noto-emoji.txt` must ship with them.
+
 ## Deploy
 - Netlify builds `main` with `npm run build` and publishes `dist/`. The Lighthouse plugin runs on every deploy and reports scores without blocking.
 - Redirects for the alternate domains and the `netlify.app` subdomain, and the security and cache headers, live in `netlify.toml`.

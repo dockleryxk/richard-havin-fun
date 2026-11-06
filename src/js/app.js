@@ -13,6 +13,7 @@
   var videoEl = document.getElementById("pizza-animations")
   var pizzaButton = document.getElementById("pizza-button")
   var skipLink = document.getElementById("skip-pizza")
+  var av1SourceEl
   var webmSourceEl
   var mp4SourceEl
 
@@ -28,7 +29,7 @@
     return videoSources[newIndex]
   }
 
-  // Create a <source> with a fixed type; swapVideo only changes its src. WebM is added first so it wins.
+  // Create a <source> with a fixed type; swapVideo only changes its src. The browser takes the first type it can play.
   function addSource(type) {
     var sourceEl = document.createElement("source")
     sourceEl.setAttribute("type", type)
@@ -40,6 +41,7 @@
   function swapVideo() {
     var selected = getRandomVideo()
 
+    av1SourceEl.setAttribute("src", "/assets/videos/" + selected + ".av1.mp4")
     webmSourceEl.setAttribute("src", "/assets/videos/" + selected + ".webm")
     mp4SourceEl.setAttribute("src", "/assets/videos/" + selected + ".mp4")
     videoEl.load()
@@ -92,6 +94,8 @@
 
   // Start the first clip and wire up the controls
   if (rootEl.classList.contains("pizza")) {
+    // Smallest first: AV1 (level 3.0 covers every clip), then VP9 WebM, then H.264 MP4
+    av1SourceEl = addSource("video/mp4; codecs=av01.0.04M.08")
     webmSourceEl = addSource("video/webm")
     mp4SourceEl = addSource("video/mp4")
     swapVideo()

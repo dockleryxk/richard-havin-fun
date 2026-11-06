@@ -40,6 +40,13 @@ body {
       outline: none;
     }
 
+    // Greeting heading, sized and spaced like the paragraphs
+    h1 {
+      margin: 10px auto;
+      font-size: 1rem;
+      font-weight: 400;
+    }
+
     // Paragraph spacing, with a smaller italic disclaimer
     p {
       margin: 10px auto;

@@ -65,7 +65,8 @@
 
   [headers.values]
     X-Frame-Options = "DENY"
-    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
 
 # Media and fonts change rarely, so browsers may reuse them for a week; rename a file when replacing it
 [[headers]]
