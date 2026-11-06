@@ -1,5 +1,6 @@
 /**
- * based on https://github.com/cferdinandi/gulp-boilerplate
+ * Build for richard.pizza: lint and minify app.js, compile Sass and inline it into index.html,
+ * copy static files, and write the sitemap. Based on https://github.com/cferdinandi/gulp-boilerplate
  */
 
 /**
@@ -10,12 +11,10 @@
 var settings = {
   clean: true,
   copy: true,
-  polyfills: false,
   reload: true,
   sitemap: true,
   scripts: true,
-  styles: true,
-  svgs: false
+  styles: true
 }
 
 /**
@@ -26,22 +25,20 @@ var paths = {
   input: "src/",
   output: "dist/",
   scripts: {
-    input: "src/js/*",
-    polyfills: ".polyfill.js",
+    input: "src/js/*.js",
     output: "dist/js/"
   },
   styles: {
     input: "src/sass/**/*.{scss,sass}",
-    output: "dist/css/"
-  },
-  svgs: {
-    input: "src/svg/*.svg",
-    output: "dist/svg/"
+    output: "dist/css/",
+    built: "dist/css/styles.min.css"
   },
   copy: {
+    base: "src/static/",
     input: "src/static/**/*",
     output: "dist/"
   },
+  html: "src/static/index.html",
   reload: "./dist/"
 }
 
@@ -60,14 +57,13 @@ var banner = {
 }
 
 /**
- * Gulp packageJsons
+ * Gulp packages
  */
 
 // General
-var { gulp, src, dest, watch, series, parallel } = require("gulp")
-var del = require("del")
-var flatmap = require("gulp-flatmap")
-var lazypipe = require("lazypipe")
+var { src, dest, watch, series, parallel } = require("gulp")
+var fs = require("fs")
+var path = require("path")
 var rename = require("gulp-rename")
 var header = require("gulp-header")
 var replace = require("gulp-replace")
@@ -75,10 +71,7 @@ var packageJson = require("./package.json")
 
 // Scripts
 var jshint = require("gulp-jshint")
-var stylish = require("jshint-stylish")
-var concat = require("gulp-concat")
 var terser = require("gulp-terser")
-var optimizejs = require("gulp-optimize-js")
 
 // Sitemap
 var sitemap = require("gulp-sitemap")
@@ -89,11 +82,11 @@ var postcss = require("gulp-postcss")
 var prefix = require("autoprefixer")
 var minify = require("cssnano")
 
-// SVGs
-var svgmin = require("gulp-svgmin")
-
 // BrowserSync
 var browserSync = require("browser-sync")
+
+// Set by enableWatchMode before the first watch build, so lint, Sass, and inlining errors are logged instead of stopping the dev server
+var isWatching = false
 
 /**
  * Gulp Tasks
@@ -107,135 +100,108 @@ var cleanDist = function (done) {
   }
 
   // Clean the dist folder
-  del.sync([
-    paths.output
-  ])
+  fs.rmSync(paths.output, { recursive: true, force: true })
 
   // Signal completion
   return done()
 }
 
-// Repeated JavaScript tasks
-var jsTasks = lazypipe()
-  // un-comment to keep the un-minified version as well
-  // .pipe(header, banner.main, { packageJson: packageJson })
-  // .pipe(optimizejs)
-  // .pipe(dest, paths.scripts.output)
-  .pipe(rename, { suffix: ".min" })
-  .pipe(terser, { toplevel: true })
-  .pipe(optimizejs)
-  .pipe(header, banner.main, { packageJson: packageJson })
-  .pipe(dest, paths.scripts.output)
-
-// Lint, minify, and concatenate scripts
+// Minify scripts
 var buildScripts = function (done) {
   // Make sure this feature is activated before running
   if (!settings.scripts) {
     return done()
   }
 
-  // Run tasks on script files
   return src(paths.scripts.input)
-    .pipe(flatmap(function (stream, file) {
-      // If the file is a directory
-      if (file.isDirectory()) {
-        // Setup a suffix variable
-        var suffix = ""
-
-        // If separate polyfill files enabled
-        if (settings.polyfills) {
-          // Update the suffix
-          suffix = ".polyfills"
-
-          // Grab files that aren"t polyfills, concatenate them, and process them
-          src([file.path + "/*.js", "!" + file.path + "/*" + paths.scripts.polyfills])
-            .pipe(concat(file.relative + ".js"))
-            .pipe(jsTasks())
-        }
-
-        // Grab all files and concatenate them
-        // If separate polyfills enabled, this will have .polyfills in the filename
-        src(file.path + "/*.js")
-          .pipe(concat(file.relative + suffix + ".js"))
-          .pipe(jsTasks())
-
-        return stream
-      }
-
-      // Otherwise, process the file
-      return stream.pipe(jsTasks())
-    }))
+    .pipe(rename({ suffix: ".min" }))
+    .pipe(terser())
+    .pipe(header(banner.main, { packageJson: packageJson }))
+    .pipe(dest(paths.scripts.output))
 }
 
-// Lint scripts
+// Lint scripts; any warning fails the build outside watch mode
 var lintScripts = function (done) {
   // Make sure this feature is activated before running
   if (!settings.scripts) {
     return done()
   }
 
-  // Lint scripts
-  return src(paths.scripts.input)
+  var stream = src(paths.scripts.input)
     .pipe(jshint(packageJson.jshintConfig))
     .pipe(jshint.reporter("jshint-stylish"))
+
+  return isWatching ? stream : stream.pipe(jshint.reporter("fail"))
 }
 
-// Process, lint, and minify Sass files
+// Compile, prefix, and minify Sass; a compile error fails the build outside watch mode
 var buildStyles = function (done) {
   // Make sure this feature is activated before running
   if (!settings.styles) {
     return done()
   }
 
-  // Run tasks on all Sass files
+  var compileSass = sass({ style: "compressed" })
+  if (isWatching) {
+    compileSass.on("error", sass.logError)
+  }
+
   return src(paths.styles.input)
-    .pipe(sass({
-      outputStyle: "compressed",
-      sourceComments: true
-    }).on("error", sass.logError))
-    .pipe(postcss([
-      prefix({
-        cascade: true,
-        remove: true
-      })
-    ]))
+    .pipe(compileSass)
+    .pipe(postcss([prefix(), minify()]))
     .pipe(header(banner.main, { packageJson: packageJson }))
-    // un-comment to keep the un-minified version as well
-    // .pipe(dest(paths.styles.output))
     .pipe(rename({ suffix: ".min" }))
-    .pipe(postcss([
-      minify({
-        discardComments: {
-          removeAll: true
-        }
-      })
-    ]))
     .pipe(dest(paths.styles.output))
 }
 
-// Optimize SVG files
-var buildSVGs = function (done) {
-  // Make sure this feature is activated before running
-  if (!settings.svgs) {
-    return done()
-  }
-
-  // Optimize SVG files
-  return src(paths.svgs.input)
-    .pipe(svgmin())
-    .pipe(dest(paths.svgs.output))
-}
-
-// Copy static files into output folder
+// Copy static files into output folder; encoding false keeps media files as raw bytes.
+// index.html is skipped when styles are on, because inlineStyles writes it.
 var copyFiles = function (done) {
   // Make sure this feature is activated before running
   if (!settings.copy) {
     return done()
   }
 
-  // Copy static files
-  return src(paths.copy.input)
+  var globs = settings.styles ? [paths.copy.input, "!" + paths.html] : paths.copy.input
+  return src(globs, { encoding: false })
     .pipe(dest(paths.copy.output))
+}
+
+// Write dist/index.html from the source page, replacing the inline-css placeholder with the built stylesheet.
+// A missing placeholder or stylesheet fails the build, or is logged in watch mode.
+var inlineStyles = function (done) {
+  // Make sure this feature is activated before running
+  if (!settings.styles || !settings.copy) {
+    return done()
+  }
+
+  var placeholder = "<!-- inline-css -->"
+  var problem = null
+  var css = ""
+
+  // The page must contain the placeholder exactly once
+  if (fs.readFileSync(paths.html, "utf8").split(placeholder).length !== 2) {
+    problem = paths.html + " must contain exactly one " + placeholder + " placeholder"
+  }
+
+  // The stylesheet is missing when Sass failed during a watch build
+  if (fs.existsSync(paths.styles.built)) {
+    css = fs.readFileSync(paths.styles.built, "utf8").trim()
+  } else {
+    problem = problem || paths.styles.built + " was not built"
+  }
+
+  if (problem && !isWatching) {
+    return done(new Error(problem))
+  }
+  if (problem) {
+    console.error("inlineStyles: " + problem)
+  }
+
+  // A string search is split and joined by gulp-replace, so the CSS is inserted literally
+  return src(paths.html)
+    .pipe(replace(placeholder, "<style>" + css + "</style>"))
+    .pipe(dest(paths.output))
 }
 
 // Build the sitemap
@@ -246,22 +212,12 @@ var buildSitemap = function (done) {
   }
 
   // https://github.com/pgilad/gulp-sitemap#options
-  var sitemapOptions = {
-    siteUrl: "https://www.richard.pizza",
-    changefreq: "weekly",
-    priority: function (siteUrl, loc, entry) {
-      // Give pages inside root path (i.e. no slashes) a higher priority
-      return loc.split("/").length === 0 ? 1 : 0.5
-    }
-  }
-
   return src(paths.copy.input + ".html", { read: false })
-    .pipe(sitemap(sitemapOptions))
-    .pipe(replace(`<?xml version="1.0" encoding="UTF-8"?>`, `<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type="text/xsl" href="sitemap.xsl"?>`))
+    .pipe(sitemap({ siteUrl: "https://www.richard.pizza" }))
     .pipe(dest(paths.output))
 }
 
-// Watch for changes to the src directory
+// Serve dist/ with BrowserSync
 var startServer = function (done) {
   // Make sure this feature is activated before running
   if (!settings.reload) {
@@ -289,9 +245,26 @@ var reloadBrowser = function (done) {
   done()
 }
 
-// Watch for changes
+// Rebuild only what changed; CSS is inlined into index.html, so style changes re-inline and reload
 var watchSource = function (done) {
-  watch(paths.input, series(exports.default, reloadBrowser))
+  watch(paths.styles.input, series(buildStyles, inlineStyles, reloadBrowser))
+  watch(paths.scripts.input, series(parallel(lintScripts, buildScripts), reloadBrowser))
+  var staticWatcher = watch(paths.copy.input, series(parallel(copyFiles, buildSitemap), inlineStyles, reloadBrowser))
+
+  // Mirror deletions from src/static so the dev server matches a clean build
+  staticWatcher.on("unlink", function (file) {
+    fs.rmSync(path.join(paths.output, path.relative(paths.copy.base, file)), { force: true })
+  })
+  staticWatcher.on("unlinkDir", function (dir) {
+    fs.rmSync(path.join(paths.output, path.relative(paths.copy.base, dir)), { recursive: true, force: true })
+  })
+
+  done()
+}
+
+// Switch on watch-mode error handling before the first build runs
+var enableWatchMode = function (done) {
+  isWatching = true
   done()
 }
 
@@ -307,15 +280,16 @@ exports.default = series(
     buildScripts,
     lintScripts,
     buildStyles,
-    buildSVGs,
     copyFiles,
     buildSitemap
-  )
+  ),
+  inlineStyles
 )
 
 // Watch and reload
 // gulp watch
 exports.watch = series(
+  enableWatchMode,
   exports.default,
   startServer,
   watchSource

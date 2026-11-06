@@ -2,7 +2,9 @@
 this is an over-engineered dumb website, [check](https://www.richard.pizza) [it](https://richard.rip) [out](https://richardjeffords.com)
 
 ### getting started
-You need [gulp-cli](https://github.com/gulpjs/gulp-cli) installed globally. I'm using Node version >= 16, but other versions will likely work.
+Use the Node version in `.nvmrc` (`nvm use`), then `yarn install`. Gulp runs from `node_modules`, so nothing needs a global install.
+
+`@netlify/plugin-lighthouse` pulls in Puppeteer, which downloads about 260 MB of Chromium on install. Netlify needs it, but you can skip it locally with `PUPPETEER_SKIP_DOWNLOAD=1 yarn install`.
 
 ## build
 ```sh
