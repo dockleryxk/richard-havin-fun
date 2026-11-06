@@ -5,14 +5,24 @@
   "dir": "auto",
   "lang": "en-US",
   "display": "standalone",
-  "orientation": "portrait",
   "scope": "/",
   "start_url": "/",
   "icons": [
     {
-      "src": "/assets/icons/android-chrome-144x144.png",
-      "sizes": "144x144",
+      "src": "/assets/icons/icon-192.png",
+      "sizes": "192x192",
       "type": "image/png"
+    },
+    {
+      "src": "/assets/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/icons/icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ],
   "theme_color": "#636A3D",

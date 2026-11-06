@@ -1,45 +1,144 @@
+// Page styles: self-hosted font, background photo, revealed content, and the pizza intro layer.
+// The intro rules apply only under html.pizza, which the inline head script sets.
+
+// Self-hosted Raleway, latin subset: upright for body text, italic for the disclaimer
+@font-face {
+  font-family: "Raleway";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/assets/fonts/raleway-latin-400-normal.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Raleway";
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/assets/fonts/raleway-latin-400-italic.woff2") format("woff2");
+}
+
+// Full-height page with the photo behind the content; AVIF where supported, WebP otherwise
 body {
+  margin: 0;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background-image: url("/assets/images/header.webp");
+  background-image: image-set(url("/assets/images/header.avif") type("image/avif"), url("/assets/images/header.webp") type("image/webp"));
   background-size: cover;
   background-repeat: no-repeat;
   background-position: 30% 50%;
-  height: 100vh;
-  width: 100vw;
-  overflow: hidden;
   font-family: "Raleway", sans-serif;
 
-  #pizza-animations {
-    display: block;
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100vh;
-    width: 100vw;
-    object-fit: cover;
-  }
-
+  // Revealed content block
   .container {
     margin: 0 auto;
     padding: 20px;
 
+    // Focus lands here programmatically at the reveal; no ring around the whole block
+    &:focus {
+      outline: none;
+    }
+
+    // Greeting heading, sized and spaced like the paragraphs
+    h1 {
+      margin: 10px auto;
+      font-size: 1rem;
+      font-weight: 400;
+    }
+
+    // Paragraph spacing, with a smaller italic disclaimer
     p {
       margin: 10px auto;
 
       &.disclaimer {
-        font-size: 0.7rem;
+        font-size: 0.75rem;
         font-style: italic;
       }
+    }
+
+    // Song player at the end of the content
+    audio {
+      display: block;
+      margin: 10px 0;
     }
   }
 }
 
-.webp body {
-  background-image: url("/assets/images/header.webp");
+// Intro controls are hidden unless the intro is running
+#pizza-animations,
+#pizza-button,
+.skip-link {
+  display: none;
 }
 
-.no-webp body {
-  background-image: url("/assets/images/header.jpg");
-}
+.pizza {
+  // Full-screen clip; the black backdrop keeps the photo hidden while a new clip loads
+  #pizza-animations {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    background-color: #000;
+  }
 
-.d-none {
-  display: none !important;
+  // Transparent full-screen button that receives every click, Enter, and Space
+  #pizza-button {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+
+    // White ring with black on both sides so it contrasts with every clip
+    &:focus-visible {
+      outline: 4px solid #fff;
+      outline-offset: -8px;
+      box-shadow: inset 0 0 0 12px #000;
+    }
+  }
+
+  // Off-screen until a keyboard user tabs to it
+  .skip-link {
+    display: block;
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 1;
+    padding: 8px 12px;
+    background-color: #fff;
+    color: #000;
+    transform: translateY(-200%);
+
+    &:focus {
+      transform: none;
+    }
+  }
+
+  // Content stays hidden until the intro ends
+  #main {
+    display: none;
+  }
+
+  // Following the skip link without app.js (#main targeted) still ends the intro
+  &:has(#main:target) {
+    #main {
+      display: block;
+    }
+
+    #pizza-animations,
+    #pizza-button,
+    .skip-link {
+      display: none;
+    }
+  }
 }
